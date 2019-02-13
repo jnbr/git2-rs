@@ -1688,9 +1688,9 @@ extern {
     pub fn git_oid_iszero(id: *const git_oid) -> c_int;
 
     // giterr
-    pub fn giterr_last() -> *const git_error;
-    pub fn giterr_clear();
-    pub fn giterr_set_str(error_class: c_int, string: *const c_char);
+    pub fn git_error_last() -> *const git_error;
+    pub fn git_error_clear();
+    pub fn git_error_set_str(error_class: c_int, string: *const c_char);
 
     // remote
     pub fn git_remote_create(out: *mut *mut git_remote,
@@ -2088,7 +2088,7 @@ extern {
                                  bld: *mut git_treebuilder) -> c_int;
 
     // buf
-    pub fn git_buf_free(buffer: *mut git_buf);
+    pub fn git_buf_dispose(buffer: *mut git_buf);
     pub fn git_buf_grow(buffer: *mut git_buf, target_size: size_t) -> c_int;
     pub fn git_buf_set(buffer: *mut git_buf, data: *const c_void,
                        datalen: size_t) -> c_int;

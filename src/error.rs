@@ -22,7 +22,7 @@ impl Error {
     /// call. This code will later be returned from the `code` function.
     ///
     /// Historically this function returned `Some` or `None` based on the return
-    /// value of `giterr_last` but nowadays it always returns `Some` so it's
+    /// value of `git_error_last` but nowadays it always returns `Some` so it's
     /// safe to unwrap the return value. This API will change in the next major
     /// version.
     pub fn last_error(code: c_int) -> Option<Error> {
@@ -30,20 +30,20 @@ impl Error {
         unsafe {
             // Note that whenever libgit2 returns an error any negative value
             // indicates that an error happened. Auxiliary information is
-            // *usually* in `giterr_last` but unfortunately that's not always
+            // *usually* in `git_error_last` but unfortunately that's not always
             // the case. Sometimes a negative error code is returned from
-            // libgit2 *without* calling `giterr_set` internally to configure
+            // libgit2 *without* calling `git_error_set` internally to configure
             // the error.
             //
             // To handle this case and hopefully provide better error messages
-            // on our end we unconditionally call `giterr_clear` when we're done
+            // on our end we unconditionally call `git_error_clear` when we're done
             // with an error. This is an attempt to clear it as aggressively as
             // possible when we can to ensure that error information from one
             // api invocation doesn't leak over to the next api invocation.
             //
-            // Additionally if `giterr_last` returns null then we returned a
+            // Additionally if `git_error_last` returns null then we returned a
             // canned error out.
-            let ptr = raw::giterr_last();
+            let ptr = raw::git_error_last();
             let err = if ptr.is_null() {
                 let mut error = Error::from_str("an unknown git error occurred");
                 error.code = code;
@@ -51,7 +51,7 @@ impl Error {
             } else {
                 Error::from_raw(code, ptr)
             };
-            raw::giterr_clear();
+            raw::git_error_clear();
             Some(err)
         }
     }
